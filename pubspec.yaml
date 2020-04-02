@@ -1,0 +1,16 @@
+name: superdeclarative_unsplash_client
+description: An Unsplash API client written in Dart
+version: 0.0.1
+homepage: https://www.github.com/matthew-carroll/superdeclarative_unsplash_client
+
+environment:
+  sdk: '>=2.7.0 <3.0.0'
+
+dependencies:
+  meta: ^1.1.8
+  http: ^0.12.0+4
+  json_serializable: ^3.3.0
+
+dev_dependencies:
+  pedantic: ^1.8.0
+  build_runner: ^1.8.1
