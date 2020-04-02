@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:json_serializable/json_serializable.dart';
 
 import '_common.dart';
 import '_user.dart';
