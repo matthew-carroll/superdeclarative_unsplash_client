@@ -14,4 +14,4 @@ doc/api/
 .idea
 
 # Unsplash API keys file for local testing.
-bin/api_keys.dart
+lib/api_keys.dart
