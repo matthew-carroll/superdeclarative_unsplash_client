@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:superdeclarative_unsplash_client/unsplash.dart';
 
@@ -128,9 +129,10 @@ class _PhotoScreenState extends State<PhotoScreen> {
             ),
             child: Hero(
               tag: _photo.id,
-              child: Image.network(
-                _photo.urls.small,
+              child: CachedNetworkImage(
+                imageUrl: _photo.urls.regular,
                 fit: BoxFit.contain,
+                fadeInDuration: Duration.zero,
               ),
             ),
           )
@@ -200,18 +202,32 @@ class _PhotoScreenState extends State<PhotoScreen> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      extendBodyBehindAppBar: true,
       body: SizedBox(
         width: double.infinity,
         height: double.infinity,
         child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            Image.network(
-              _photo.urls.regular,
+            CachedNetworkImage(
+              imageUrl: _photo.urls.regular,
               fit: BoxFit.cover,
               alignment: Alignment.topLeft,
               color: Colors.black.withOpacity(0.8),
               colorBlendMode: BlendMode.dstOut,
+              fadeInDuration: Duration.zero,
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,

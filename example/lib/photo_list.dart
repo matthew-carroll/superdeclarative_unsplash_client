@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:superdeclarative_unsplash_client/api_keys.dart';
@@ -56,12 +57,6 @@ class _PhotoListScreenState extends State<PhotoListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('The Grand Finale'),
-        backgroundColor:
-            Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
-      ),
-      extendBodyBehindAppBar: true,
       body: Stack(
         children: <Widget>[
           PhotoList(
@@ -131,6 +126,7 @@ class PhotoList extends StatefulWidget {
 
 class _PhotoListState extends State<PhotoList> {
   PagingListener _pagingListener;
+  ScrollController _scrollController;
 
   @override
   void initState() {
@@ -142,6 +138,8 @@ class _PhotoListState extends State<PhotoList> {
     });
 
     widget.paginator.addListener(_pagingListener);
+
+    _scrollController = ScrollController();
   }
 
   @override
@@ -155,37 +153,63 @@ class _PhotoListState extends State<PhotoList> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     widget.paginator.removeListener(_pagingListener);
     super.dispose();
   }
 
   Widget _buildListItem(BuildContext context, Photo photo) {
-    return GestureDetector(
-      child: Hero(
-        tag: photo.id,
-        child: Image.network(
-          photo.urls.small,
-          fit: BoxFit.cover,
+    return AspectRatio(
+      aspectRatio: photo.width / photo.height,
+      child: GestureDetector(
+        child: Hero(
+          tag: photo.id,
+          child: CachedNetworkImage(
+            imageUrl: photo.urls.regular,
+            fit: BoxFit.cover,
+          ),
         ),
+        onTap: () {
+          Navigator.of(context).pushNamed('photo', arguments: photo);
+        },
       ),
-      onTap: () {
-        Navigator.of(context).pushNamed('photo', arguments: photo);
-      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ListView.builder(
-        itemBuilder: (BuildContext context, int index) {
-          if (widget.paginator.isPhotoLoaded(index)) {
-            return _buildListItem(context, widget.paginator.getPhoto(index));
-          } else {
-            widget.paginator.loadNextPage();
-            return null;
-          }
-        },
+      child: Scrollbar(
+        controller: _scrollController,
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: <Widget>[
+            SliverAppBar(
+              flexibleSpace: FlexibleSpaceBar(
+                title: Text('The Grand Finale'),
+              ),
+              expandedHeight: 150,
+              stretch: true,
+              pinned: true,
+              elevation: 10,
+              backgroundColor:
+                  Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  if (widget.paginator.isPhotoLoaded(index)) {
+                    return _buildListItem(
+                        context, widget.paginator.getPhoto(index));
+                  } else {
+                    widget.paginator.loadNextPage();
+                    return null;
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
