@@ -13,6 +13,7 @@ workflows:
       branch_patterns:
         - pattern: 'master'
           include: true
+          source: true
     scripts:
       - flutter packages pub get
       - flutter test

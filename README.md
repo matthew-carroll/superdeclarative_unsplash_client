@@ -45,6 +45,10 @@ final paginator = Paginator.listPhotos(
 )..loadNextPage();
 ```
 
+## Run Tests
+
+To run the tests in this package, define an environment variable called `UNSPLASH_KEY` and set its value to your unsplash API key.
+
 ## Example Project
 
 An example project, built with Flutter, is available in the `/example` directory.
