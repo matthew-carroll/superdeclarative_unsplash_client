@@ -5,6 +5,13 @@ import 'package:superdeclarative_unsplash_client/api_keys.dart';
 import 'package:superdeclarative_unsplash_client/unsplash.dart';
 
 class PhotoListScreen extends StatefulWidget {
+  const PhotoListScreen({
+    Key key,
+    this.accessKey,
+  }) : super(key: key);
+
+  final String accessKey;
+
   @override
   _PhotoListScreenState createState() => _PhotoListScreenState();
 }
@@ -14,6 +21,7 @@ class _PhotoListScreenState extends State<PhotoListScreen> {
   Paginator _paginator;
 
   TextEditingController _searchController;
+  FocusNode _searchFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -21,26 +29,32 @@ class _PhotoListScreenState extends State<PhotoListScreen> {
 
     _unsplashClient = UnsplashClient(
       httpClient: http.Client(),
-      accessKey: accessKey,
+      accessKey: widget.accessKey,
     );
 
-    _paginator = Paginator.listPhotos(
-      client: _unsplashClient,
-    )..loadNextPage();
-
     _searchController = TextEditingController();
+
+    // Immediately run a search to fill list with initial photos.
+    _searchPhotos();
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _paginator.dispose();
     super.dispose();
   }
 
   void _searchPhotos() {
     final String searchQuery = _searchController.text;
 
+    if (_searchFocusNode.hasFocus) {
+      _searchFocusNode.unfocus();
+    }
+
     setState(() {
+      _paginator?.dispose();
+
       if (searchQuery.isNotEmpty) {
         _paginator = Paginator.searchPhotos(
           client: _unsplashClient,
@@ -63,60 +77,68 @@ class _PhotoListScreenState extends State<PhotoListScreen> {
             paginator: _paginator,
           ),
           Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      height: 54,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .scaffoldBackgroundColor
-                            .withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(
-                          color: Theme.of(context).accentColor,
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            offset: const Offset(0, 5),
-                            blurRadius: 10,
-                            color: Colors.black.withOpacity(0.5),
-                          ),
-                        ],
-                      ),
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration.collapsed(
-                          hintText: 'Search photos...',
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  FloatingActionButton(
-                    onPressed: _searchPhotos,
-                    tooltip: 'Search Photos',
-                    child: Icon(Icons.search),
-                  ),
-                ],
-              ),
-            ),
+            bottom: 16,
+            left: 16,
+            right: 16,
+            child: _buildBottomSearch(),
           ),
         ],
       ),
     );
   }
+
+  Widget _buildBottomSearch() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Container(
+            height: 54,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(
+                color: Theme.of(context).accentColor,
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  offset: const Offset(0, 5),
+                  blurRadius: 10,
+                  color: Colors.black.withOpacity(0.5),
+                ),
+              ],
+            ),
+            child: Center(
+              child: TextField(
+                controller: _searchController,
+                focusNode: _searchFocusNode,
+                decoration: InputDecoration.collapsed(
+                  hintText: 'Search photos...',
+                ),
+                onSubmitted: (value) {
+                  _searchPhotos();
+                },
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 16),
+        FloatingActionButton(
+          tooltip: 'Search Photos',
+          onPressed: _searchPhotos,
+          child: Icon(Icons.search),
+        ),
+      ],
+    );
+  }
 }
 
 class PhotoList extends StatefulWidget {
-  const PhotoList({Key key, this.paginator}) : super(key: key);
+  const PhotoList({
+    Key key,
+    this.paginator,
+  }) : super(key: key);
 
   final Paginator paginator;
 
@@ -126,20 +148,18 @@ class PhotoList extends StatefulWidget {
 
 class _PhotoListState extends State<PhotoList> {
   PagingListener _pagingListener;
-  ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
 
     _pagingListener = FunctionalPagingListener(
-        onPageLoaded: (List<Photo> page, int pageIndex) {
-      setState(() {});
-    });
+      onPageLoaded: (List<Photo> page, int pageIndex) {
+        setState(() {});
+      },
+    );
 
     widget.paginator.addListener(_pagingListener);
-
-    _scrollController = ScrollController();
   }
 
   @override
@@ -153,9 +173,42 @@ class _PhotoListState extends State<PhotoList> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
     widget.paginator.removeListener(_pagingListener);
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text('Unsplash Client'),
+            ),
+            expandedHeight: 150,
+            stretch: true,
+            pinned: true,
+            elevation: 10,
+            backgroundColor:
+                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                if (widget.paginator.isPhotoLoaded(index)) {
+                  return _buildListItem(
+                      context, widget.paginator.getPhoto(index));
+                } else {
+                  widget.paginator.loadNextPage();
+                  return null;
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildListItem(BuildContext context, Photo photo) {
@@ -164,6 +217,7 @@ class _PhotoListState extends State<PhotoList> {
       child: GestureDetector(
         child: Hero(
           tag: photo.id,
+          transitionOnUserGestures: true,
           child: CachedNetworkImage(
             imageUrl: photo.urls.regular,
             fit: BoxFit.cover,
@@ -175,41 +229,32 @@ class _PhotoListState extends State<PhotoList> {
       ),
     );
   }
+}
+
+class ListItem extends StatelessWidget {
+  const ListItem({
+    Key key,
+    @required this.photo,
+  }) : super(key: key);
+
+  final Photo photo;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Scrollbar(
-        controller: _scrollController,
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: <Widget>[
-            SliverAppBar(
-              flexibleSpace: FlexibleSpaceBar(
-                title: Text('The Grand Finale'),
-              ),
-              expandedHeight: 150,
-              stretch: true,
-              pinned: true,
-              elevation: 10,
-              backgroundColor:
-                  Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
-            ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  if (widget.paginator.isPhotoLoaded(index)) {
-                    return _buildListItem(
-                        context, widget.paginator.getPhoto(index));
-                  } else {
-                    widget.paginator.loadNextPage();
-                    return null;
-                  }
-                },
-              ),
-            ),
-          ],
+    return AspectRatio(
+      aspectRatio: photo.width / photo.height,
+      child: GestureDetector(
+        child: Hero(
+          tag: photo.id,
+          transitionOnUserGestures: true,
+          child: CachedNetworkImage(
+            imageUrl: photo.urls.regular,
+            fit: BoxFit.cover,
+          ),
         ),
+        onTap: () {
+          Navigator.of(context).pushNamed('photo', arguments: photo);
+        },
       ),
     );
   }

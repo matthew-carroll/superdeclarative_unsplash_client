@@ -53,16 +53,21 @@ class Paginator {
 
   final int perPage;
   final PageLoader _pageLoader;
-  final Map<int, List<Photo>> _pages = <int, List<Photo>>{};
+//  final Map<int, List<Photo>> _pages = <int, List<Photo>>{};
+  final List<Photo> _photos = <Photo>[];
+  final Set<String> _existingPhotoIds = <String>{};
   final Set<PagingListener> _listeners = <PagingListener>{};
   int _nextPageIndex; // starts at 1
   Future<List<Photo>> _nextPageResult;
 
-  int get loadedPageCount => _pages.length;
+//  int get loadedPageCount => _pages.length;
+  int get loadedPhotoCount => _photos.length;
 
   void dispose() {
     _listeners.clear();
-    _pages.clear();
+//    _pages.clear();
+    _photos.clear();
+    _existingPhotoIds.clear();
     _nextPageIndex = 1;
   }
 
@@ -74,25 +79,27 @@ class Paginator {
     _listeners.remove(listener);
   }
 
-  bool isPageLoaded(int index) {
-    return index < _nextPageIndex;
-  }
+//  bool isPageLoaded(int index) {
+//    return index < _nextPageIndex;
+//  }
 
   bool isPhotoLoaded(int photoIndex) {
-    return isPageLoaded((photoIndex / perPage).floor() + 1);
+    return _photos.length > photoIndex;
+//    return isPageLoaded((photoIndex / perPage).floor() + 1);
   }
 
   Photo getPhoto(int photoIndex) {
     assert(isPhotoLoaded(photoIndex), 'Photo $photoIndex is not loaded yet.');
-    final int pageIndex = (photoIndex / perPage).floor() + 1;
-    final List<Photo> page = getPage(pageIndex);
-    return page[photoIndex % perPage];
+    return _photos[photoIndex];
+//    final int pageIndex = (photoIndex / perPage).floor() + 1;
+//    final List<Photo> page = getPage(pageIndex);
+//    return page[photoIndex % perPage];
   }
 
-  List<Photo> getPage(int index) {
-    assert(isPageLoaded(index), 'Page $index has not been loaded yet.');
-    return _pages[index - 1];
-  }
+//  List<Photo> getPage(int index) {
+//    assert(isPageLoaded(index), 'Page $index has not been loaded yet.');
+//    return _pages[index - 1];
+//  }
 
   Future<List<Photo>> loadNextPage() {
     if (_nextPageResult != null) {
@@ -118,7 +125,11 @@ class Paginator {
 
   Future<List<Photo>> _loadPage(int index) async {
     List<Photo> page = await _pageLoader(index, perPage);
-    _pages[index - 1] = page;
+    List<Photo> filteredPage = page
+        .where((Photo photo) => !_existingPhotoIds.contains(photo.id))
+        .toList(growable: false);
+    _photos.addAll(filteredPage);
+    _existingPhotoIds.addAll(filteredPage.map((Photo photo) => photo.id));
     return page;
   }
 }

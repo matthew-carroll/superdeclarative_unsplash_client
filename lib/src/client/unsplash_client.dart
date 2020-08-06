@@ -21,7 +21,7 @@ class UnsplashClient {
   final http.Client httpClient;
   final String accessKey;
 
-  Map<String, String> addAuthorizationToHeaders(Map<String, String> headers) {
+  Map<String, String> _addAuthorizationToHeaders(Map<String, String> headers) {
     return <String, String>{}
       ..addAll(headers)
       ..['Authorization'] = 'Client-ID $accessKey';
@@ -34,7 +34,7 @@ class UnsplashClient {
   }) async {
     final http.Response response = await httpClient.get(
       rootUrl + '/search/collections?query=$query&page=$page&per_page=$perPage',
-      headers: addAuthorizationToHeaders(universalHeaders),
+      headers: _addAuthorizationToHeaders(universalHeaders),
     );
 
     final dynamic responseJson = json.decode(response.body);
@@ -138,7 +138,7 @@ class UnsplashClient {
 
     final http.Response response = await httpClient.get(
       rootUrl + '/search/photos?$params',
-      headers: addAuthorizationToHeaders(universalHeaders),
+      headers: _addAuthorizationToHeaders(universalHeaders),
     );
 
     final dynamic responseJson = json.decode(response.body);
@@ -155,7 +155,7 @@ class UnsplashClient {
   }) async {
     final http.Response response = await httpClient.get(
       rootUrl + '/search/users?query=$query&page=$page&per_page=$perPage',
-      headers: addAuthorizationToHeaders(universalHeaders),
+      headers: _addAuthorizationToHeaders(universalHeaders),
     );
 
     final dynamic responseJson = json.decode(response.body);
@@ -171,7 +171,7 @@ class UnsplashClient {
   }) async {
     final http.Response response = await httpClient.get(
       rootUrl + '/collections?page=$page&per_page=$perPage',
-      headers: addAuthorizationToHeaders(universalHeaders),
+      headers: _addAuthorizationToHeaders(universalHeaders),
     );
 
     final dynamic responseJson = json.decode(response.body);
@@ -190,7 +190,7 @@ class UnsplashClient {
   }) async {
     final http.Response response = await httpClient.get(
       rootUrl + '/collections/featured?page=$page&per_page=$perPage',
-      headers: addAuthorizationToHeaders(universalHeaders),
+      headers: _addAuthorizationToHeaders(universalHeaders),
     );
 
     final dynamic responseJson = json.decode(response.body);
@@ -206,7 +206,7 @@ class UnsplashClient {
   Future<Collection> getCollection({@required int id}) async {
     final http.Response response = await httpClient.get(
       rootUrl + '/collections/$id',
-      headers: addAuthorizationToHeaders(universalHeaders),
+      headers: _addAuthorizationToHeaders(universalHeaders),
     );
 
     final Map<String, dynamic> responseJson = json.decode(response.body);
@@ -222,7 +222,7 @@ class UnsplashClient {
   Future<Photo> getPhoto({@required String id}) async {
     final http.Response response = await httpClient.get(
       rootUrl + '/photos/$id',
-      headers: addAuthorizationToHeaders(universalHeaders),
+      headers: _addAuthorizationToHeaders(universalHeaders),
     );
 
     final Map<String, dynamic> responseJson = json.decode(response.body);
@@ -245,7 +245,7 @@ class UnsplashClient {
     final http.Response response = await httpClient.get(
       rootUrl +
           '/photos/$photoId/statistics?resolution=$resolutionParam&quantity=$quantity',
-      headers: addAuthorizationToHeaders(universalHeaders),
+      headers: _addAuthorizationToHeaders(universalHeaders),
     );
 
     final Map<String, dynamic> responseJson = json.decode(response.body);
@@ -256,7 +256,7 @@ class UnsplashClient {
   Future<Photo> getRandomPhoto() async {
     final http.Response response = await httpClient.get(
       rootUrl + '/photos/random',
-      headers: addAuthorizationToHeaders(universalHeaders),
+      headers: _addAuthorizationToHeaders(universalHeaders),
     );
 
     final Map<String, dynamic> responseJson = json.decode(response.body);
@@ -267,7 +267,7 @@ class UnsplashClient {
   Future<List<Photo>> getMultipleRandomPhotos({count = 1}) async {
     final http.Response response = await httpClient.get(
       rootUrl + '/photos/random?count=$count',
-      headers: addAuthorizationToHeaders(universalHeaders),
+      headers: _addAuthorizationToHeaders(universalHeaders),
     );
 
     final List<dynamic> responseJson = json.decode(response.body);
@@ -297,7 +297,7 @@ class UnsplashClient {
 
     final http.Response response = await httpClient.get(
       rootUrl + '/photos?page=$page&per_page=$perPage&order_by=$orderByParam',
-      headers: addAuthorizationToHeaders(universalHeaders),
+      headers: _addAuthorizationToHeaders(universalHeaders),
     );
 
     final dynamic responseJson = json.decode(response.body);
@@ -313,7 +313,7 @@ class UnsplashClient {
   Future<TotalStats> getTotalStats() async {
     final http.Response response = await httpClient.get(
       rootUrl + '/stats/total',
-      headers: addAuthorizationToHeaders(universalHeaders),
+      headers: _addAuthorizationToHeaders(universalHeaders),
     );
 
     final dynamic responseJson = json.decode(response.body);
@@ -324,7 +324,7 @@ class UnsplashClient {
   Future<MonthStats> getMonthStats() async {
     final http.Response response = await httpClient.get(
       rootUrl + '/stats/month',
-      headers: addAuthorizationToHeaders(universalHeaders),
+      headers: _addAuthorizationToHeaders(universalHeaders),
     );
 
     final dynamic responseJson = json.decode(response.body);

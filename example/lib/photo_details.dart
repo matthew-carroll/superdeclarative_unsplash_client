@@ -2,6 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:superdeclarative_unsplash_client/unsplash.dart';
 
+/// Displays a single, specified Unsplash photo
+///
+/// Expects a `Photo` to be passed as the incoming route `arguments`.
 class PhotoScreen extends StatefulWidget {
   @override
   _PhotoScreenState createState() => _PhotoScreenState();
@@ -20,6 +23,54 @@ class _PhotoScreenState extends State<PhotoScreen> {
     super.didChangeDependencies();
 
     _photo = ModalRoute.of(context).settings.arguments;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      extendBodyBehindAppBar: true,
+      body: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          // Background image.
+          CachedNetworkImage(
+            imageUrl: _photo.urls.regular,
+            fit: BoxFit.cover,
+            alignment: Alignment.topLeft,
+            color: Colors.black.withOpacity(0.8),
+            colorBlendMode: BlendMode.dstOut,
+            fadeInDuration: Duration.zero,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Spacer(flex: 2),
+              // Primary photo
+              _buildMeasuredPhoto(),
+              Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                // Stats at bottom of screen.
+                children: _buildStats(),
+              ),
+              Spacer(flex: 1),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildMeasuredPhoto() {
@@ -76,6 +127,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
               SizedBox(
                 width: displayWidth,
                 height: displayHeight,
+                // The actual photo
                 child: _buildPhoto(),
               ),
               SizedBox(width: measureTapeMargin),
@@ -129,6 +181,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
             ),
             child: Hero(
               tag: _photo.id,
+              transitionOnUserGestures: true,
               child: CachedNetworkImage(
                 imageUrl: _photo.urls.regular,
                 fit: BoxFit.contain,
@@ -139,30 +192,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
         : SizedBox();
   }
 
-  Widget _buildStat({
-    @required IconData icon,
-    @required String value,
-  }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Icon(
-          icon,
-          size: 30,
-        ),
-        SizedBox(width: 16),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 20,
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  List<Widget> _buildStats() {
     final List<Widget> stats = [];
     if (_photo.views != null) {
       stats
@@ -200,51 +230,28 @@ class _PhotoScreenState extends State<PhotoScreen> {
           SizedBox(height: 32),
         );
     }
+    return stats;
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
+  Widget _buildStat({
+    @required IconData icon,
+    @required String value,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Icon(
+          icon,
+          size: 30,
+        ),
+        SizedBox(width: 16),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 20,
           ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
         ),
-      ),
-      extendBodyBehindAppBar: true,
-      body: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            CachedNetworkImage(
-              imageUrl: _photo.urls.regular,
-              fit: BoxFit.cover,
-              alignment: Alignment.topLeft,
-              color: Colors.black.withOpacity(0.8),
-              colorBlendMode: BlendMode.dstOut,
-              fadeInDuration: Duration.zero,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Spacer(flex: 2),
-                _buildMeasuredPhoto(),
-                Spacer(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: stats,
-                ),
-                Spacer(flex: 1),
-              ],
-            ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 }
