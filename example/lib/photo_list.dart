@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:superdeclarative_unsplash_client/api_keys.dart';
 import 'package:superdeclarative_unsplash_client/unsplash.dart';
 
 class PhotoListScreen extends StatefulWidget {
