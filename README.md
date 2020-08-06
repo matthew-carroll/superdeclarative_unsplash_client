@@ -2,13 +2,23 @@
 
 A Dart Client for the Unsplash API.
 
-**This is a [SuperDeclarative!](https://superdeclarative.com) product, not an official Unsplash library**
+**This is a [SuperDeclarative!](https://superdeclarative.com) project, not an official Unsplash package**
+
+---
+
+If you get value from this package, please consider supporting SuperDeclarative!
+
+<a href="https://donate.superdeclarative.com" target="_blank" alt="Donate"><img src="https://img.shields.io/badge/Donate-%24%24-green"></a>
+
+---
 
 Unsplash is a service that provides access to royalty free stock photographs. In addition to direct browsing of photographs, Unsplash offers a developer API for accessing photos, collections of photos, users of the platform, and more.
 
 This package is a client for the Unsplash API, built in the Dart language.
 
 Unsplash API documentation: https://unsplash.com/documentation
+
+---
 
 ## Quickstart
 
@@ -23,7 +33,13 @@ final unsplashClient = UnsplashClient(
 );
 ```
 
-Get a single photo:
+Get a random photo:
+
+```dart
+final Photo photo = await unsplashClient.getRandomPhoto();
+```
+
+Get a specified photo:
 
 ```dart
 final Photo photo = await unsplashClient.getPhoto(id: 'some_photo_id');
@@ -45,13 +61,33 @@ final paginator = Paginator.listPhotos(
 )..loadNextPage();
 ```
 
+---
+
 ## Run Tests
 
 To run the tests in this package, define an environment variable called `UNSPLASH_KEY` and set its value to your unsplash API key.
 
+```bash
+$ dart test
+```
+
+or
+
+```bash
+$ flutter test
+```
+
+Support for `flutter test` will probably be removed as soon as the CI
+system supports the Dart version. This is because a Dart package should
+not depend upon Flutter's testing system.
+
+---
+
 ## Example Project
 
 An example project, built with Flutter, is available in the `/example` directory.
+
+---
 
 ## Supported Calls
 
