@@ -12,6 +12,12 @@ dependencies:
   json_serializable: ^3.3.0
 
 dev_dependencies:
-  test: ^1.15.3
+  # test has no version because it's limited by flutter_test constraints. When flutter_test
+  # is removed, give test a legit version.
+  test:
   pedantic: ^1.8.0
   build_runner: ^1.8.1
+
+  # This is here because CI can't run dart commands. Remove this when it can.
+  flutter_test:
+    sdk: flutter

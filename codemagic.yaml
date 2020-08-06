@@ -1,10 +1,18 @@
 # Check out https://docs.codemagic.io/yaml/yaml/ for more information
 
 workflows:
-  flutter-package:
-    name: Flutter or Dart Package
+  dart-package:
+    name: superdeclarative_unsplash_client
     environment:
       flutter: dev
+      vars:
+        UNSPLASH_KEY: Encrypted(Z0FBQUFBQmZLNU42RTA1ZmFUaDlWUGVEaVZBSC04MEZlUVlSMnZ2a3NGWEhXWXotV3dlaGNRbGx5aGFPWFpOOFAyeVMwRzhGc0c1aVV5NWNnVkFibzRnOW9kZlBDV05Yd3VUNXk3bHZzUUpxZldfS0QzY2VwWThVLUlJU0tVVmlHRm9iOExURmtIYXg=)
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'master'
+          include: true
     scripts:
       - flutter packages pub get
       - flutter test
