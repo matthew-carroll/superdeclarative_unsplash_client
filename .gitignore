@@ -11,7 +11,10 @@ build/
 doc/api/
 
 # IntelliJ Project
-.idea
+# Ignore the root .idea folder except the runConfigurations folder
+!idea/
+.idea/*
+!/.idea/runConfigurations/
 
 # Unsplash API keys file for local testing.
 lib/api_keys.dart
