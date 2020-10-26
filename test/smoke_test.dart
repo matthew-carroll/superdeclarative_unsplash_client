@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:superdeclarative_unsplash_client/unsplash.dart';
+import 'package:superdeclarative_unsplash_client/superdeclarative_unsplash_client.dart';
 import 'package:test/test.dart';
 
 void main() {

@@ -1,3 +1,8 @@
+## 0.0.2
+
+- Smoke tests
+- Broken import fix
+
 ## 0.0.1
 
 - Partial support for GET APIs

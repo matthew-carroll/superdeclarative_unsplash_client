@@ -1,6 +1,6 @@
 name: superdeclarative_unsplash_client
 description: An Unsplash API client written in Dart
-version: 0.0.1
+version: 0.0.2
 homepage: https://www.github.com/matthew-carroll/superdeclarative_unsplash_client
 
 environment:
@@ -9,7 +9,7 @@ environment:
 dependencies:
   meta: ^1.1.8
   http: ^0.12.0+4
-  json_serializable: ^3.3.0
+  json_annotation: ^3.1.0
 
 dev_dependencies:
   # test has no version because it's limited by flutter_test constraints. When flutter_test
@@ -17,6 +17,7 @@ dev_dependencies:
   test:
   pedantic: ^1.8.0
   build_runner: ^1.8.1
+  json_serializable: ^3.3.0
 
   # This is here because CI can't run dart commands. Remove this when it can.
   flutter_test:

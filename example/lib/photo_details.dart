@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:superdeclarative_unsplash_client/unsplash.dart';
+import 'package:superdeclarative_unsplash_client/superdeclarative_unsplash_client.dart';
 
 /// Displays a single, specified Unsplash photo at the center of the screen
 /// atop a darker copy of that photo stretched across the background.
