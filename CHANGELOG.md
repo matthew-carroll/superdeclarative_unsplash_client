@@ -1,3 +1,7 @@
+## 0.0.3
+
+- Made the http.Client optional for UnsplashClient constructor
+
 ## 0.0.2
 
 - Smoke tests
