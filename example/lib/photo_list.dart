@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:superdeclarative_unsplash_client/superdeclarative_unsplash_client.dart';
 
@@ -27,7 +26,6 @@ class _PhotoListScreenState extends State<PhotoListScreen> {
     super.initState();
 
     _unsplashClient = UnsplashClient(
-      httpClient: http.Client(),
       accessKey: widget.accessKey,
     );
 

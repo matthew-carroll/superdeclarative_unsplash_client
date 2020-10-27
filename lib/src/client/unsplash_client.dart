@@ -14,9 +14,9 @@ const Map<String, String> universalHeaders = {
 
 class UnsplashClient {
   UnsplashClient({
-    this.httpClient,
-    this.accessKey,
-  });
+    http.Client httpClient,
+    @required this.accessKey,
+  }) : httpClient = httpClient ?? http.Client();
 
   final http.Client httpClient;
   final String accessKey;
