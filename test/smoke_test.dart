@@ -1,17 +1,18 @@
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
 import 'package:superdeclarative_unsplash_client/superdeclarative_unsplash_client.dart';
 import 'package:test/test.dart';
 
 void main() {
   final unsplashKey = Platform.environment['UNSPLASH_KEY'];
-  assert(unsplashKey != null,
-      'No Unsplash API key found. Place your key in an environment variable called "UNSPLASH_KEY"');
+  if (unsplashKey == null) {
+    final errorMessage =
+        'No Unsplash API key found. Place your key in an environment variable called "UNSPLASH_KEY"';
+    print('Error before running tests: $errorMessage');
+    throw Exception(errorMessage);
+  }
 
-  final http.Client httpClient = http.Client();
   final UnsplashClient unsplashClient = UnsplashClient(
-    httpClient: httpClient,
     accessKey: unsplashKey,
   );
 

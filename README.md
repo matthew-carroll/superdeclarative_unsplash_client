@@ -19,10 +19,7 @@ Unsplash API documentation: https://unsplash.com/documentation
 Create a client:
 
 ```dart
-import 'package:http/http.dart' as http;
-
 final unsplashClient = UnsplashClient(
-  httpClient: http.Client(),
   accessKey: YOUR_API_KEY,
 );
 ```
