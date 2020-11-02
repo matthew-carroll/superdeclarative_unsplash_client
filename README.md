@@ -6,6 +6,12 @@ A Dart Client for the Unsplash API.
 
 ---
 
+If you get value from this package, please consider supporting SuperDeclarative!
+
+<a href="https://donate.superdeclarative.com" target="_blank" alt="Donate"><img src="https://img.shields.io/badge/Donate-%24%24-green"></a>
+
+---
+
 Unsplash is a service that provides access to royalty free stock photographs. In addition to direct browsing of photographs, Unsplash offers a developer API for accessing photos, collections of photos, users of the platform, and more.
 
 This package is a client for the Unsplash API, built in the Dart language.
